@@ -307,10 +307,11 @@ type Conversation struct {
 }
 
 type Friend struct {
-	RPC            RPC            `yaml:"rpc"`
-	Prometheus     Prometheus     `yaml:"prometheus"`
-	RateLimiter    RateLimiter    `yaml:"rateLimiter"`
-	CircuitBreaker CircuitBreaker `yaml:"circuitBreaker"`
+	RPC             RPC            `yaml:"rpc"`
+	Prometheus      Prometheus     `yaml:"prometheus"`
+	AutoAcceptFriend bool          `yaml:"autoAcceptFriend"`
+	RateLimiter     RateLimiter    `yaml:"rateLimiter"`
+	CircuitBreaker  CircuitBreaker `yaml:"circuitBreaker"`
 }
 
 type Group struct {

@@ -27,7 +27,7 @@
 | **openim-push.yml**             | openim-push listen IP, port, and offline push settings        |
 | **openim-rpc-auth.yml**         | openim-rpc-auth listen IP, port, token validity settings |
 | **openim-rpc-conversation.yml** | openim-rpc-conversation listen IP and port settings     |
-| **openim-rpc-friend.yml**       | openim-rpc-friend listen IP and port settings           |
+| **openim-rpc-friend.yml**       | openim-rpc-friend listen IP, port, and friend request handling settings |
 | **openim-rpc-group.yml**        | openim-rpc-group listen IP and port settings           |
 | **openim-rpc-msg.yml**          | openim-rpc-msg listen IP and port settings         |
 
@@ -52,6 +52,7 @@
 | Multi-end mutual kick strategy and max concurrent connections per gateway                 | `openim-msggateway.yml` |
 | Offline message push configuration                                            | `openim-push.yml`       |
 | Configure webhooks for callback notifications (e.g., before/after message send)         | `webhooks.yml`          |
+| Auto-accept friend requests                                                     | `openim-rpc-friend.yml` |
 | Whether new group members can view historical messages                          | `openim-rpc-group.yml`  |
 | Token expiration time settings                                      | `openim-rpc-auth.yml`     |
 | Scheduled task settings (e.g., how long to retain messages)                      | `openim-crontask.yml`   |

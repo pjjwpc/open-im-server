@@ -37,6 +37,7 @@ import (
 	"github.com/openimsdk/protocol/relation"
 	"github.com/openimsdk/protocol/sdkws"
 	"github.com/openimsdk/tools/discovery"
+	"github.com/openimsdk/tools/mcontext"
 	"github.com/openimsdk/tools/errs"
 	"github.com/openimsdk/tools/utils/datautil"
 	"google.golang.org/grpc"
@@ -158,6 +159,29 @@ func (s *friendServer) ApplyToAddFriend(ctx context.Context, req *relation.Apply
 	}
 	if err = s.db.AddFriendRequest(ctx, req.FromUserID, req.ToUserID, req.ReqMsg, req.Ex); err != nil {
 		return nil, err
+	}
+	if s.config.RpcConfig.AutoAcceptFriend {
+		autoReq := &relation.RespondFriendApplyReq{
+			FromUserID:   req.FromUserID,
+			ToUserID:     req.ToUserID,
+			HandleResult: constant.FriendResponseAgree,
+			HandleMsg:    "Auto-accepted",
+		}
+		if err := s.webhookBeforeAddFriendAgree(ctx, &s.config.WebhooksConfig.BeforeAddFriendAgree, autoReq); err != nil && err != servererrs.ErrCallbackContinue {
+			return nil, err
+		}
+		ctx = mcontext.WithOpUserIDContext(ctx, req.ToUserID)
+		if err := s.db.AgreeFriendRequest(ctx, &model.FriendRequest{
+			FromUserID: req.FromUserID,
+			ToUserID:   req.ToUserID,
+			HandleMsg:  autoReq.HandleMsg,
+		}); err != nil {
+			return nil, err
+		}
+		s.webhookAfterAddFriendAgree(ctx, &s.config.WebhooksConfig.AfterAddFriendAgree, autoReq)
+		s.notificationSender.FriendApplicationAgreedNotification(ctx, autoReq, false)
+		s.webhookAfterAddFriend(ctx, &s.config.WebhooksConfig.AfterAddFriend, req)
+		return resp, nil
 	}
 	s.notificationSender.FriendApplicationAddNotification(ctx, req)
 	s.webhookAfterAddFriend(ctx, &s.config.WebhooksConfig.AfterAddFriend, req)
